@@ -37,13 +37,15 @@ entity PWM_mod is
          CE_44100HZ : in STD_LOGIC;
          clock : in STD_LOGIC;
          raz : in STD_LOGIC;
-         odata : out STD_LOGIC);
+         odata : out STD_LOGIC;
+         EN : out STD_LOGIC);
+       --  cop : out integer );
 end PWM_mod;
 
 architecture Behavioral of PWM_mod is
 
     signal output : std_logic := '0';
-    
+
 
 begin
 
@@ -52,28 +54,30 @@ begin
 
         variable count : integer := 0;
         variable  copy : integer := 0;
-        
-        
+
+
 
     begin
-        
-        copy := to_integer(signed(idata)); 
-        
+
+        copy := to_integer(signed(idata));
+
 
         if (clock'event and clock ='1') then
-        
-            
+
+            EN <= '1';
 
             if (raz ='1') then
                 output <= '0';
                 count := 0;
+                EN <= '0';
             elsif (CE_44100HZ = '1' and output = '0' ) then
+
                 output <= '1';
                 count := 0;
             elsif ( output ='1') then
-            
+
                 if ( count < copy + 725) then
-                    
+
                     count := count + 1;
                 else
                     output <= '0';
@@ -82,6 +86,7 @@ begin
         end if;
 
         odata <= output ;
+     --   cop <= copy + 725;
     end process;
 
     -- odata <= output ; 

@@ -37,12 +37,14 @@ entity Compteur is
     Port ( raz : in STD_LOGIC;
          clock : in STD_LOGIC;
          CE44100 : in STD_LOGIC;
-         output : out STD_LOGIC_VECTOR (15 downto 0));
+         EN : in std_logic ;
+         MAX : in STD_LOGIC_VECTOR (17 downto 0);
+         output : out STD_LOGIC_VECTOR (17 downto 0));
 end Compteur;
 
 architecture Behavioral of Compteur is
 
-    signal count : STD_LOGIC_VECTOR (15 downto 0) := x"0000";
+    signal count : STD_LOGIC_VECTOR (17 downto 0) := "000000000000000000";
 
 begin
 
@@ -53,13 +55,17 @@ begin
         if (clock'event and clock='1') then
 
             if (raz ='1') then
-                count <= x"0000";
-            elsif ( CE44100 = '1') then
+                count <= "000000000000000000";
+            elsif ( EN = '1') then
 
-                if ( count < 44099) then
-                    count <= count + x"0001";
-                else
-                    count <= x"0000";
+                if ( CE44100 = '1') then
+
+                    if ( count < MAX) then
+                        count <= count + "000000000000000001";
+                    else
+                        count <= "000000000000000000";
+                    end if;
+
                 end if;
 
             end if;
